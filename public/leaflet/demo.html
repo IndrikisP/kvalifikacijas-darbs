@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Demo: Leaflet.CountrySelect</title>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src="Leaflet.CountrySelect.js"></script>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	</head>
+	
+	<style>
+		html, body, #map {
+			padding:0px;
+			margin:0px;
+			height:100%;
+			width:100%;
+		}
+	</style>
+	
+	<script>
+		function init(){	
+			setUpTimer();		
+			var baseLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{attribution: 'Tiles &copy; CartoDB'});
+			var map = L.map("map",{layers: [baseLayer], center: [20, 10], zoom: 2, scrollWheelZoom: false, zoomControl: false, doubleClickZoom: false, dragging: false}); // -23.88, -62.75
+			var select = L.countrySelect({exclude:"French Southern and Antarctic Lands"});
+
+			select.addTo(map);
+			
+			select.on('change', function(e){
+				if (e.feature === undefined){ //Do nothing on title
+					return;
+				}
+				var country = L.geoJson(e.feature);
+				/*if (this.previousCountry != null){
+					map.removeLayer(this.previousCountry);
+				}
+				this.previousCountry = country;*/
+
+				map.addLayer(country);
+				
+				
+			});
+		}
+		function startTimer(duration, display) {
+    		var timer = duration, minutes, seconds;
+    		setInterval(function () {
+        		minutes = parseInt(timer / 60, 10);
+        		seconds = parseInt(timer % 60, 10);
+
+        		minutes = minutes < 10 ? "0" + minutes : minutes;
+        		seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        		display.textContent = minutes + ":" + seconds;
+
+        		if (--timer < 0) {
+            		timer = duration;
+        		}
+    		}, 1000);
+}
+
+function setUpTimer() {
+    var fiveMinutes = 240 * 5,
+        display = document.querySelector('#timerID');
+    startTimer(fiveMinutes, display);
+};
+	</script>
+
+	<body onload="init()">
+		
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			  <span class="navbar-toggler-icon"></span>
+			</button>
+		  
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			  <ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+				  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item dropdown">
+				  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Browse quizzes
+				  </a>
+				  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="#">World countries</a>
+					<a class="dropdown-item" href="#">Geography questions</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">User made</a>
+				  </div>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#">Make a quiz</a>
+				</li>
+				
+			  </ul>
+			  <button>Start timer</button>
+			  <p id="timerID"></p>
+			</div>
+		  </nav>
+		  <div id="map"></div>
+	</body>
+</html>
